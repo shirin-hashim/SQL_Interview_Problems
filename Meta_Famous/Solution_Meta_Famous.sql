@@ -13,22 +13,23 @@ VALUES(1, 2),
 
 /* ANSWER QUERY */
 WITH rn AS (
-    SELECT	user_id,
-			follower_id,
-			ROW_NUMBER() OVER (PARTITION BY user_id) AS RowNumber
-    FROM	famous
+    SELECT user_id,
+        follower_id,
+        ROW_NUMBER() OVER (PARTITION BY user_id) AS RowNumber
+    FROM famous
 ),
 cnt AS (
-    SELECT	user_id,
-           COUNT(RowNumber) AS num_followers
-    FROM	rn
+    SELECT user_id,
+        COUNT(RowNumber) AS num_followers
+    FROM rn
     GROUP BY user_id
 ),
 total_users AS (
-    SELECT	COUNT(DISTINCT user_id) AS t_users
-    FROM	cnt
+    SELECT COUNT(DISTINCT user_id) AS t_users
+    FROM cnt
 )
-SELECT	*,
-		ROUND(f.num_followers * 100 / t.t_users, 2) AS famous_percentage
-FROM	cnt f
-		CROSS JOIN total_users t;
+SELECT *,
+    ROUND(f.num_followers * 100 / t.t_users, 2) AS famous_percentage
+FROM cnt f
+    CROSS JOIN total_users t;
+
